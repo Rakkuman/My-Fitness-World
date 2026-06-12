@@ -26,10 +26,38 @@ Cuando abras la URL publicada:
 
 ## Importante sobre los datos
 
-La app guarda los registros en el dispositivo usando `localStorage`. Eso significa:
+La app permite iniciar sesion o entrar como invitado. El invitado puede explorar la app, pero sus datos no se guardan al salir o recargar.
+
+Cuando el usuario inicia sesion, los registros se guardan en el dispositivo usando `localStorage` y tambien se sincronizan con Firebase.
 
 - Si registras datos en el PC, quedan en ese PC.
 - Si registras datos en el celular, quedan en ese celular.
 - Puedes usar `Exportar` e `Importar` para mover una copia entre dispositivos.
+- Si entras con cuenta, tus datos se guardan en Firestore y se cargan al iniciar sesion.
 
-Para sincronizacion automatica entre PC y celular hace falta agregar una base de datos con login, por ejemplo Firebase o Supabase.
+## Configurar Firebase
+
+1. En Firebase Console, abre el proyecto `my-fitness-world`.
+2. En `Authentication > Sign-in method`, activa `Email/Password`.
+3. En `Authentication > Settings > Authorized domains`, agrega el dominio de GitHub Pages:
+
+```text
+TU-USUARIO.github.io
+```
+
+4. En `Firestore Database`, crea una base de datos.
+5. En `Rules`, pega estas reglas y publica:
+
+```text
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
+```
+
+Estas reglas hacen que cada cuenta solo pueda leer y escribir su propio perfil.

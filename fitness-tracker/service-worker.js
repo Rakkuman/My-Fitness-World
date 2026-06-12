@@ -1,4 +1,4 @@
-const cacheName = "registro-fit-v1";
+const cacheName = "registro-fit-v24";
 const assets = [
   "./",
   "./index.html",
